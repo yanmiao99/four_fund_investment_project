@@ -1,0 +1,57 @@
+// 全局样式变量定义
+// 基于 Arco Design 的设计规范，定义项目中使用的通用变量
+
+// ===== 颜色变量 =====
+// 使用 Arco Design 内置的颜色变量
+@import '@arco-design/web-vue/es/style/index.less';
+
+// 主色调 - 继承 Arco Design 的主色
+@primary-color: rgb(var(--primary-6));
+@primary-hover-color: rgb(var(--primary-5));
+@primary-active-color: rgb(var(--primary-7));
+
+// 功能色彩 - 使用 Arco Design 的语义化颜色
+@success-color: rgb(var(--success-6)); // 成功色（绿色）- 用于上涨数据
+@danger-color: rgb(var(--danger-6)); // 危险色（红色）- 用于下跌数据
+@warning-color: rgb(var(--warning-6)); // 警告色（橙色）- 用于提醒信息
+@info-color: rgb(var(--primary-6)); // 信息色（蓝色）- 用于链接等
+
+// 文字颜色 - 使用 Arco Design 的文字颜色规范
+@text-color: rgb(var(--color-text-1)); // 主要文字颜色
+@text-color-secondary: rgb(var(--color-text-2)); // 次要文字颜色
+@text-color-disabled: rgb(var(--color-text-4)); // 禁用文字颜色
+
+// 背景颜色
+@bg-color: rgb(var(--color-bg-1)); // 主背景色
+@bg-color-secondary: rgb(var(--color-bg-2)); // 次要背景色
+@bg-color-hover: rgb(var(--color-fill-1)); // 悬停背景色
+
+// 边框颜色
+@border-color: rgb(var(--color-border-2)); // 边框颜色
+@border-radius: var(--border-radius-medium); // 圆角大小
+
+// ===== 尺寸变量 =====
+// 图标尺寸规范 - 统一项目中的图标大小
+@icon-size-small: 12px; // 小图标 - 用于涨跌箭头、按钮内图标
+@icon-size-normal: 14px; // 常规图标 - 用于卡片标题图标
+@icon-size-large: 16px; // 大图标 - 用于重要操作图标
+
+// 间距规范
+@spacing-xs: 4px; // 极小间距 - 图标与文字间距
+@spacing-sm: 8px; // 小间距
+@spacing-md: 16px; // 中等间距
+@spacing-lg: 24px; // 大间距
+
+// 阴影效果
+@box-shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1); // 轻微阴影
+@box-shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15); // 中等阴影
+
+// ===== 响应式断点 =====
+@screen-xs: 480px;
+@screen-sm: 768px;
+@screen-md: 992px;
+@screen-lg: 1200px;
+
+// ===== 动画变量 =====
+@transition-duration: 0.3s; // 标准动画时长
+@transition-timing: ease-in-out; // 动画缓动函数
