@@ -1,7 +1,7 @@
 <template>
   <div class="fund-list-container">
     <div class="header">
-      <h1>我的股票列表</h1>
+      <h1>我的股票列表 ({{ fundList.length }})</h1>
       <div class="header-actions">
         <a-button
           type="outline"
@@ -113,7 +113,7 @@
  */
 import { ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { Message } from '@arco-design/web-vue';
+import { Message, Modal } from '@arco-design/web-vue';
 
 // 路由实例，用于页面跳转
 const router = useRouter();
@@ -178,9 +178,36 @@ const columns = [
     slotName: 'priceChange', // 使用插槽自定义显示（包含颜色和图标）
   },
   {
+    title: '创建时间',
+    dataIndex: 'createTime',
+    width: 150,
+    render: ({ record }) => {
+      const date = new Date(record.createTime);
+      return (
+        date.toLocaleDateString('zh-CN') +
+        ' ' +
+        date.toLocaleTimeString('zh-CN', { hour12: false })
+      );
+    },
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    width: 150,
+    render: ({ record }) => {
+      if (!record.updateTime) return '-';
+      const date = new Date(record.updateTime);
+      return (
+        date.toLocaleDateString('zh-CN') +
+        ' ' +
+        date.toLocaleTimeString('zh-CN', { hour12: false })
+      );
+    },
+  },
+  {
     title: '操作',
     slotName: 'operations', // 使用插槽显示操作按钮
-    width: 150,
+    width: 190,
   },
 ];
 
@@ -239,6 +266,7 @@ const addFund = () => {
     portionAmount: form.totalAmount / 10, // 每份金额（总金额÷10）
     lastBuyPrice: form.initialPrice, // 最后买入价格
     createTime: new Date().toISOString(), // 创建时间
+    updateTime: new Date().toISOString(), // 更新时间
   };
 
   // 添加到列表并保存
@@ -264,19 +292,30 @@ const resetForm = () => {
 
 /**
  * 删除基金
- * 根据记录ID从列表中移除对应的基金数据
+ * 根据记录ID从列表中移除对应的基金数据，删除前需要用户确认
  * @param {Object} record - 要删除的基金记录
  */
 const deleteFund = (record) => {
-  // 查找要删除的记录在数组中的索引
-  const index = fundList.value.findIndex((fund) => fund.id === record.id);
-  if (index > -1) {
-    // 从数组中移除该记录
-    fundList.value.splice(index, 1);
-    // 保存更新后的列表
-    saveFundList();
-    Message.success('删除成功');
-  }
+  Modal.confirm({
+    title: '确认删除',
+    content: `确定要删除基金 "${record.name}" 吗？删除后将无法恢复。`,
+    okText: '确认删除',
+    cancelText: '取消',
+    okButtonProps: {
+      status: 'danger',
+    },
+    onOk: () => {
+      // 查找要删除的记录在数组中的索引
+      const index = fundList.value.findIndex((fund) => fund.id === record.id);
+      if (index > -1) {
+        // 从数组中移除该记录
+        fundList.value.splice(index, 1);
+        // 保存更新后的列表
+        saveFundList();
+        Message.success('删除成功');
+      }
+    },
+  });
 };
 
 /**
@@ -288,17 +327,17 @@ const viewDetail = (record) => {
   // 使用路由导航跳转到详情页
   router.push({
     path: '/fundDetail',
-    query: { id: record.id }  // 通过query参数传递基金ID
-  })
-}
+    query: { id: record.id }, // 通过query参数传递基金ID
+  });
+};
 
 /**
-  * 跳转到文档页面
-  * 查看系统介绍和使用指南
-  */
- const goToDocumentation = () => {
-   router.push('/documentation')
- }
+ * 跳转到文档页面
+ * 查看系统介绍和使用指南
+ */
+const goToDocumentation = () => {
+  router.push('/documentation');
+};
 
 /**
  * 获取价格变化的CSS类名
@@ -336,7 +375,7 @@ onMounted(() => {
  */
 .fund-list-container {
   padding: @spacing-lg;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -356,7 +395,7 @@ onMounted(() => {
     font-size: 24px;
     font-weight: 600;
   }
-  
+
   // 头部按钮组样式
   .header-actions {
     display: flex;

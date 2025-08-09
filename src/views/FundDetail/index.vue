@@ -153,6 +153,27 @@
             </div>
           </div>
         </a-card>
+
+        <!-- 时间信息卡片 -->
+        <a-card class="info-card">
+          <template #extra>
+            <a-tag color="purple">时间信息</a-tag>
+          </template>
+          <div class="card-content">
+            <div class="info-item">
+              <span class="label">创建时间</span>
+              <span class="value">{{
+                formatDateTime(fundInfo.createTime)
+              }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">最后修改</span>
+              <span class="value">{{
+                fundInfo.updateTime ? formatDateTime(fundInfo.updateTime) : '-'
+              }}</span>
+            </div>
+          </div>
+        </a-card>
       </div>
 
       <!-- 每日更新卡片 -->
@@ -443,6 +464,9 @@ const updateDailyChange = () => {
         fundInfo.value.initialPrice) *
       100;
 
+    // 更新最后修改时间
+    fundInfo.value.updateTime = new Date().toISOString();
+
     // 保存更新后的数据到本地存储
     saveFundInfo();
 
@@ -473,6 +497,8 @@ const confirmBuy = () => {
       fundInfo.value.usedPortions += 1;
       // 更新最后买入价格（用于计算下次买入提醒）
       fundInfo.value.lastBuyPrice = fundInfo.value.currentPrice;
+      // 更新最后修改时间
+      fundInfo.value.updateTime = new Date().toISOString();
 
       // 初始化交易历史数组（如果不存在）
       if (!fundInfo.value.history) {
@@ -540,6 +566,8 @@ const confirmSell = () => {
       fundInfo.value.initialPrice = fundInfo.value.currentPrice; // 当前价格作为新的初始价格
       fundInfo.value.lastBuyPrice = fundInfo.value.currentPrice; // 当前价格作为最后买入价格
       fundInfo.value.priceChange = 0; // 重置累计涨跌幅
+      // 更新最后修改时间
+      fundInfo.value.updateTime = new Date().toISOString();
 
       // 保存数据并显示成功消息（包含收益信息）
       saveFundInfo();
@@ -572,6 +600,22 @@ const saveFundInfo = () => {
  */
 const goBack = () => {
   router.push('/fundList');
+};
+
+/**
+ * 格式化日期时间
+ * 将ISO时间字符串格式化为本地时间显示
+ * @param {string} dateTimeString - ISO时间字符串
+ * @returns {string} 格式化后的时间字符串
+ */
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return '-';
+  const date = new Date(dateTimeString);
+  return (
+    date.toLocaleDateString('zh-CN') +
+    ' ' +
+    date.toLocaleTimeString('zh-CN', { hour12: false })
+  );
 };
 
 /**
@@ -690,7 +734,7 @@ onMounted(() => {
  */
 .fund-detail-container {
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -709,6 +753,7 @@ onMounted(() => {
     color: @text-color;
     font-size: 18px;
     font-weight: 600;
+    margin-left: auto;
   }
 }
 
@@ -724,13 +769,23 @@ onMounted(() => {
 
 /**
  * 信息卡片行布局
- * 使用 CSS Grid 实现三列等宽布局
+ * 使用 CSS Grid 实现四列等宽布局
  */
 .info-cards-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
   margin-bottom: 20px;
+
+  // 响应式布局：在较小屏幕上改为两列
+  @media (max-width: 1400px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  // 响应式布局：在手机屏幕上改为单列
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 /**

@@ -240,8 +240,9 @@
       <a-button
         type="primary"
         size="large"
+        class="start-button"
         @click="goToFundList">
-        ⬅️ 返回基金列表
+        🚀 快速开始
       </a-button>
     </div>
   </div>
@@ -261,7 +262,7 @@ const router = useRouter();
  * 返回基金列表页面
  */
 const goToFundList = () => {
-  router.push('/');
+  router.push('/FundList');
 };
 </script>
 
@@ -273,7 +274,6 @@ const goToFundList = () => {
 .documentation-container {
   margin: 0 auto;
   padding: @spacing-lg;
-  background: linear-gradient(135deg, #224b91 0%, #764ba2 50%, #f093fb 100%);
   min-height: 100vh;
   position: relative;
   padding: 2% 20%;
@@ -372,6 +372,7 @@ const goToFundList = () => {
   font-size: 1.4rem;
   font-weight: 600;
   color: #2c3e50;
+  margin-top: 20px;
 }
 
 .title-icon {
@@ -1150,6 +1151,7 @@ const goToFundList = () => {
 .action-section {
   text-align: center;
   padding: @spacing-md 0;
+  margin-top: 40px;
 
   .arco-btn {
     border-radius: 50px;
@@ -1163,6 +1165,24 @@ const goToFundList = () => {
 
     .fa {
       margin-right: @spacing-xs;
+    }
+  }
+
+  .start-button {
+    font-size: 18px;
+    padding: 12px 40px;
+    height: auto;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    font-weight: 600;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     }
   }
 }
