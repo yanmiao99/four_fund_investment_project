@@ -1,5 +1,85 @@
 <template>
   <div class="documentation-container">
+    <!-- 导航触发按钮 -->
+    <div
+      class="nav-trigger"
+      @click="toggleNav"
+      v-show="!showNav">
+      <span class="trigger-icon">📚</span>
+      <span class="trigger-text">导航</span>
+    </div>
+
+    <!-- 导航遮罩层 -->
+    <div
+      class="nav-overlay"
+      :class="{ 'overlay-visible': showNav }"
+      @click="toggleNav"></div>
+
+    <!-- 悬浮导航栏 -->
+    <div
+      class="floating-nav"
+      :class="{ 'nav-visible': showNav }">
+      <div class="nav-header">
+        <span class="nav-title">📚 导航</span>
+        <a-button
+          type="text"
+          size="small"
+          @click="toggleNav"
+          class="nav-toggle">
+          ✕
+        </a-button>
+      </div>
+      <div
+        class="nav-content"
+        v-show="showNav">
+        <div class="nav-items">
+          <a-button
+            type="text"
+            size="small"
+            @click="scrollToSection('intro')"
+            class="nav-item">
+            🚀 系统简介
+          </a-button>
+          <a-button
+            type="text"
+            size="small"
+            @click="scrollToSection('method')"
+            class="nav-item">
+            💡 4%定投法核心原理
+          </a-button>
+          <a-button
+            type="text"
+            size="small"
+            @click="scrollToSection('advantages')"
+            class="nav-item">
+            🏆 4%定投法的投资优势
+          </a-button>
+          <a-button
+            type="text"
+            size="small"
+            @click="scrollToSection('guide')"
+            class="nav-item">
+            🗺️ 系统使用指南
+          </a-button>
+          <a-button
+            type="text"
+            size="small"
+            @click="scrollToSection('risk')"
+            class="nav-item">
+            ⚠️ 投资风险提示
+          </a-button>
+          <a-divider style="margin: 8px 0" />
+          <a-button
+            type="primary"
+            size="small"
+            @click="goToFundList"
+            class="nav-start-btn">
+            🚀 快速开始
+          </a-button>
+        </div>
+      </div>
+    </div>
+
     <!-- 页面标题 -->
     <div class="header-section">
       <h1 class="main-title">📚 基金定投管理系统</h1>
@@ -7,7 +87,9 @@
     </div>
 
     <!-- 系统介绍 -->
-    <a-card class="intro-card">
+    <a-card
+      class="intro-card"
+      id="intro">
       <template #title>
         <div class="card-title">🚀 系统简介</div>
       </template>
@@ -49,7 +131,9 @@
     </a-card>
 
     <!-- 4%定投法介绍 -->
-    <a-card class="method-card">
+    <a-card
+      class="method-card"
+      id="method">
       <template #title>
         <div class="card-title">💡 4%定投法核心原理</div>
       </template>
@@ -103,7 +187,9 @@
     </a-card>
 
     <!-- 投资优势 -->
-    <a-card class="advantages-card">
+    <a-card
+      class="advantages-card"
+      id="advantages">
       <template #title>
         <div class="card-title">🏆 4%定投法的投资优势</div>
       </template>
@@ -155,7 +241,9 @@
     </a-card>
 
     <!-- 使用指南 -->
-    <a-card class="guide-card">
+    <a-card
+      class="guide-card"
+      id="guide">
       <template #title>
         <div class="card-title">🗺️ 系统使用指南</div>
       </template>
@@ -207,7 +295,9 @@
     </a-card>
 
     <!-- 风险提示 -->
-    <a-card class="risk-card">
+    <a-card
+      class="risk-card"
+      id="risk">
       <template #title>
         <div class="card-title">⚠️ 投资风险提示</div>
       </template>
@@ -253,10 +343,37 @@
  * 文档页面 - 系统介绍和使用指南
  * 介绍4%定投法的核心原理和系统功能
  */
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 // 路由实例，用于页面跳转
 const router = useRouter();
+
+// 导航栏显示状态
+const showNav = ref(false);
+
+/**
+ * 切换导航栏显示状态
+ */
+const toggleNav = () => {
+  showNav.value = !showNav.value;
+};
+
+/**
+ * 滚动到指定章节
+ * @param {string} sectionId - 章节ID
+ */
+const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
+  // 关闭弹窗
+  showNav.value = false;
+};
 
 /**
  * 返回基金列表页面
@@ -1187,6 +1304,195 @@ const goToFundList = () => {
   }
 }
 
+/* 导航触发按钮样式 */
+.nav-trigger {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 50px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 999;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+
+  .trigger-icon {
+    font-size: 18px;
+  }
+
+  .trigger-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 导航遮罩层样式 */
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 998;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+
+  &.overlay-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* 悬浮导航栏样式 */
+.floating-nav {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 320px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+
+  &.nav-visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px 20px 0 0;
+
+    .nav-title {
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-toggle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 1);
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .nav-content {
+    padding: 12px 16px 16px;
+
+    .nav-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .nav-item {
+        width: 100%;
+        text-align: left;
+        justify-content: flex-start;
+        padding: 20px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          color: rgba(255, 255, 255, 1);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+
+      .nav-start-btn {
+        width: 100%;
+        margin-top: 8px;
+        padding: 20px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.8) 0%,
+          rgba(118, 75, 162, 0.8) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        backdrop-filter: blur(10px);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+          background: linear-gradient(
+            135deg,
+            rgba(102, 126, 234, 1) 0%,
+            rgba(118, 75, 162, 1) 100%
+          );
+        }
+      }
+    }
+  }
+}
+
+/* 导航栏收起状态 */
+.floating-nav:not(.nav-visible) {
+  .nav-content {
+    display: none;
+  }
+}
+
 /* 响应式设计 */
 @media (max-width: @screen-md) {
   .documentation-container {
@@ -1247,6 +1553,40 @@ const goToFundList = () => {
     flex-direction: column;
     gap: 15px;
     text-align: center;
+  }
+
+  .floating-nav {
+    min-width: 260px;
+    max-width: 280px;
+
+    .nav-header {
+      padding: 14px 16px;
+
+      .nav-title {
+        font-size: 15px;
+      }
+
+      .nav-toggle {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    .nav-content {
+      padding: 10px 12px 12px;
+
+      .nav-items {
+        .nav-item {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+
+        .nav-start-btn {
+          padding: 10px 14px;
+          font-size: 13px;
+        }
+      }
+    }
   }
 }
 </style>
