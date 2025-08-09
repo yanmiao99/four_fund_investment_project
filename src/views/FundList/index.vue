@@ -2,14 +2,24 @@
   <div class="fund-list-container">
     <div class="header">
       <h1>我的股票列表</h1>
-      <a-button
-        type="primary"
-        @click="showAddModal = true">
-        <template #icon>
-          <font-awesome-icon icon="plus" />
-        </template>
-        添加新股票
-      </a-button>
+      <div class="header-actions">
+        <a-button
+          type="outline"
+          @click="goToDocumentation">
+          <template #icon>
+            <font-awesome-icon icon="book" />
+          </template>
+          系统介绍
+        </a-button>
+        <a-button
+          type="primary"
+          @click="showAddModal = true">
+          <template #icon>
+            <font-awesome-icon icon="plus" />
+          </template>
+          添加新股票
+        </a-button>
+      </div>
     </div>
 
     <a-table
@@ -278,9 +288,17 @@ const viewDetail = (record) => {
   // 使用路由导航跳转到详情页
   router.push({
     path: '/fundDetail',
-    query: { id: record.id }, // 通过query参数传递基金ID
-  });
-};
+    query: { id: record.id }  // 通过query参数传递基金ID
+  })
+}
+
+/**
+  * 跳转到文档页面
+  * 查看系统介绍和使用指南
+  */
+ const goToDocumentation = () => {
+   router.push('/documentation')
+ }
 
 /**
  * 获取价格变化的CSS类名
@@ -324,7 +342,7 @@ onMounted(() => {
 
 /**
  * 页面头部样式
- * 包含标题和添加按钮的布局
+ * 包含标题和操作按钮的布局
  */
 .header {
   display: flex;
@@ -337,6 +355,13 @@ onMounted(() => {
     color: @text-color;
     font-size: 24px;
     font-weight: 600;
+  }
+  
+  // 头部按钮组样式
+  .header-actions {
+    display: flex;
+    gap: @spacing-md;
+    align-items: center;
   }
 }
 
