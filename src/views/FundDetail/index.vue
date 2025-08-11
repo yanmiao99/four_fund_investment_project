@@ -11,7 +11,7 @@
       </a-button>
       <h1 class="fund-name">
         {{ fundInfo.name }} (<a
-          :href="`https://xueqiu.com/S/${fundInfo.code}`"
+          :href="`https://xueqiu.com/S/SH${fundInfo.code}`"
           target="_blank"
           class="stock-code-link"
           >{{ fundInfo.code }} <font-awesome-icon icon="external-link-alt" /></a
@@ -32,7 +32,7 @@
               <span class="label">股票代码</span>
               <span class="value">
                 <a
-                  :href="`https://xueqiu.com/S/${fundInfo.code}`"
+                  :href="`https://xueqiu.com/S/SH${fundInfo.code}`"
                   target="_blank"
                   class="stock-code-link">
                   {{ fundInfo.code }}
@@ -200,6 +200,14 @@
               html-type="submit"
               :loading="updating">
               <font-awesome-icon icon="edit" /> 更新涨跌幅
+            </a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button
+              type="primary"
+              @click="getDailyChange"
+              :loading="updating">
+              <font-awesome-icon icon="edit" /> 获取并更新涨跌幅
             </a-button>
           </a-form-item>
         </a-form>
@@ -451,29 +459,27 @@ const updateDailyChange = () => {
   updating.value = true;
 
   // 模拟异步更新过程（实际项目中可能是API调用）
-  setTimeout(() => {
-    const oldPrice = fundInfo.value.currentPrice;
+  const oldPrice = fundInfo.value.currentPrice;
 
-    // 根据涨跌幅百分比计算新的当前价格
-    const changeRatio = updateForm.dailyChange / 100;
-    fundInfo.value.currentPrice = oldPrice * (1 + changeRatio);
+  // 根据涨跌幅百分比计算新的当前价格
+  const changeRatio = updateForm.dailyChange / 100;
+  fundInfo.value.currentPrice = oldPrice * (1 + changeRatio);
 
-    // 重新计算累计涨跌幅（相对于初始买入价格）
-    fundInfo.value.priceChange =
-      ((fundInfo.value.currentPrice - fundInfo.value.initialPrice) /
-        fundInfo.value.initialPrice) *
-      100;
+  // 重新计算累计涨跌幅（相对于初始买入价格）
+  fundInfo.value.priceChange =
+    ((fundInfo.value.currentPrice - fundInfo.value.initialPrice) /
+      fundInfo.value.initialPrice) *
+    100;
 
-    // 更新最后修改时间
-    fundInfo.value.updateTime = new Date().toISOString();
+  // 更新最后修改时间
+  fundInfo.value.updateTime = new Date().toISOString();
 
-    // 保存更新后的数据到本地存储
-    saveFundInfo();
+  // 保存更新后的数据到本地存储
+  saveFundInfo();
 
-    Message.success('价格更新成功');
-    updating.value = false;
-    updateForm.dailyChange = null;
-  }, 500);
+  Message.success('价格更新成功');
+  updating.value = false;
+  updateForm.dailyChange = null;
 };
 
 /**
@@ -709,6 +715,23 @@ const getOperationSuggestion = () => {
     return '继续持有';
   }
 };
+
+// 获取涨跌幅
+const getDailyChange = () => {
+  updating.value = true;
+  // fetch() GET /stock_info?code=股票代码
+  fetch('https://fundapi.funjs.top/stock_info?code=' + fundInfo.value.code)
+    .then((response) => response.json())
+    .then(async (data) => {
+      console.log(data);
+      updateForm.dailyChange = data.change_percent;
+      await updateDailyChange();
+    })
+    .finally(() => {
+      updating.value = false;
+    });
+};
+
 /**
  * 组件生命周期 - 挂载完成
  * 页面加载完成后自动加载基金信息
